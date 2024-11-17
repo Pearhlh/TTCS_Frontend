@@ -1,0 +1,20 @@
+<div class="app-rating">
+  <button
+    mat-icon-button
+    #ratingButton
+    *ngFor="let ratingId of ratingArr; index as i"
+    [id]="'star_' + i"
+    (click)="onClickRating(i + 1)"
+    [matTooltip]="(ratingId + 1).toString()"
+    matTooltipPosition="above"
+  >
+    <mat-icon [ngStyle]="{ color: this.showColor }">
+      {{ showIcon(i) }}
+    </mat-icon>
+  </button>
+
+  <span> ({{ this.ratingNumber }} lượt đánh giá)</span>
+  <mat-error *ngIf="starCount == null || starCount == 0">
+    Star count is <strong>required</strong> and cannot be zero
+  </mat-error>
+</div>

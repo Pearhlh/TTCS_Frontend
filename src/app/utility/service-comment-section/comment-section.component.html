@@ -1,0 +1,65 @@
+<div class="pack-container" id="pack-container" #packContainer>
+  <div class="title">
+    <h4 class="service-name">Bình luận</h4>
+  </div>
+  <div class="comment-pack">
+    <div class="send-rate">
+      <button
+        *ngIf="isUserLogin()"
+        mat-stroked-button
+        style="color: rgb(4, 201, 201); font-size: 16px"
+        (click)="sendComment()"
+        [disabled]="isSending"
+      >
+        {{ !isSending ? "Gửi" : "Đang gửi" }}
+      </button>
+
+    </div>
+    <app-tiny-mce-editor
+      *ngIf="isUserLogin()"
+      [blobName]="''"
+      [containerName]="''"
+      (result)="getTinyMceResult($event)"
+      style="width: 100%; z-index: 0"
+    ></app-tiny-mce-editor>
+    <h3 *ngIf="!isUserLogin()" style="font-size: 25px; font-weight: bold">
+      Vui lòng đăng nhập để bình luận
+    </h3>
+  </div>
+
+  <div class="title">
+    <h4 class="tour-name">Danh sách bình luận</h4>
+  </div>
+
+  <div class="comment-list">
+    <app-comment-tour-single
+      *ngFor="let serviceComment of serviceCommentList"
+      style="width: 100%"
+      [blobName]="serviceComment.id"
+      [isUserComment]="isUserComment(serviceComment.userId)"
+      [blobContainerName]="blobContainerName"
+      [userId]="serviceComment.userId"
+      [senderName]="serviceComment.userName"
+      [sendTime]="serviceComment.createDate"
+      (delete)="deleteComment($event)"
+    />
+    <h3
+      *ngIf="serviceCommentList.length <= 0"
+      style="font-size: 25px; font-weight: bold"
+    >
+      <i class="fa fa-commenting-o" aria-hidden="true"></i> Không có bình luận
+    </h3>
+  </div>
+
+  <div class="comment-button">
+    <button
+      mat-stroked-button
+      style="color: rgb(4, 201, 201); font-size: 16px"
+      (click)="getMoreServiceComment()"
+      [disabled]="isLoading"
+      *ngIf="canLoadMore"
+    >
+      Xem thêm
+    </button>
+  </div>
+</div>

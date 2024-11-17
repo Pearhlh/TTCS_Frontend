@@ -1,0 +1,14 @@
+.addContainer {
+    margin-bottom: 15px;
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.add-button {
+  margin-bottom: 22px !important;
+  margin-right: 20px !important;
+}

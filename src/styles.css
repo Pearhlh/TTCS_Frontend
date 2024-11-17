@@ -1,0 +1,42 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.container {
+  min-height: 600px;
+}
+
+.full-width-input {
+  height: fit-content !important;
+}
+
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+mat-form-field {
+  margin-bottom: 20px !important;
+}
+
+mat-paginator mat-form-field {
+  margin-bottom: 0px !important;
+}
+
+.validation-container {
+  margin-top: -10px !important;
+  margin-bottom: 15px !important;
+}
+
+.row {
+  margin-left: 30px !important;
+  margin-right: 0 !important;
+}
+
+

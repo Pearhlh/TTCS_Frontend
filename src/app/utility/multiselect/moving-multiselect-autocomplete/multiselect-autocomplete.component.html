@@ -1,0 +1,673 @@
+<div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+      <div class="row">
+        <h2
+          mat-form-label
+          style="
+            font-weight: heavy;
+            font-size: 16px;
+            margin-bottom: 0px;
+            margin-left: 20px;
+          "
+        >
+          Danh sách lịch trình di chuyển chính
+        </h2>
+      </div>
+
+      <div
+        class="row"
+        *ngIf="movingScheduleList.length < 1 && data_selected.length < 1"
+        style="margin-bottom: 20px"
+      >
+        <mat-chip color="warn" style="font-size: 16px; margin-left: 20px"
+          >Chưa có danh sách</mat-chip
+        >
+      </div>
+
+      <ng-template
+        #inputMovingSchedule
+        let-index="index"
+        let-id="id"
+        let-driverName="driverName"
+        let-vehiclePlate="vehiclePlate"
+        let-phoneNumber="phoneNumber"
+        let-singlePrice="singlePrice"
+        let-description="description"
+      >
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-left: 15px;
+          "
+        >
+          <mat-expansion-panel
+            [expanded]="false"
+            style="width: 80%; margin-right: 10px"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title> Lịch trình mới {{ index + 1 }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>
+              <span style="font-weight: bold"
+                >Người điều khiển phương tiện:
+              </span>
+              {{ driverName }}
+            </p>
+            <p>
+              <span style="font-weight: bold">Biển số phương tiện:</span>
+              {{ vehiclePlate }}
+            </p>
+            <p>
+              <span style="font-weight: bold">SĐT hỗ trợ:</span>
+              {{ phoneNumber }}
+            </p>
+            <p>
+              <span style="font-weight: bold">Giá đơn:</span>
+              {{ formatVNCurrency(singlePrice) }}
+            </p>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="removeSchedule(id)"
+              [disabled]="disabled"
+            >
+              Gỡ
+            </button>
+          </mat-expansion-panel>
+        </div>
+      </ng-template>
+
+      <ng-template
+        #existMovingSchedule
+        let-index="index"
+        let-id="id"
+        let-driverName="driverName"
+        let-vehiclePlate="vehiclePlate"
+        let-phoneNumber="phoneNumber"
+        let-singlePrice="singlePrice"
+        let-description="description"
+      >
+        <div
+          style="
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-left: 15px;
+          "
+        >
+          <mat-expansion-panel
+            [expanded]="false"
+            style="width: 80%; margin-right: 10px"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title style="color: green">
+                Lịch trình {{ index + 1 }}
+                <i
+                  class="fa fa-check"
+                  style="margin-left: 5px"
+                  aria-hidden="true"
+                ></i
+              ></mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>
+              <span style="font-weight: bold"
+                >Người điều khiển phương tiện:
+              </span>
+              {{ driverName }}
+            </p>
+            <p>
+              <span style="font-weight: bold">Biển số xe:</span>
+              {{ vehiclePlate }}
+            </p>
+            <p>
+              <span style="font-weight: bold">SĐT hỗ trợ:</span>
+              {{ phoneNumber }}
+            </p>
+            <p>
+              <span style="font-weight: bold">Giá đơn:</span>
+              {{ formatVNCurrency(singlePrice) }}
+            </p>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="clickEditSchedule(id)"
+              style="margin-right: 10px"
+              [disabled]="disabled"
+            >
+              Chỉnh sửa
+            </button>
+            <button
+              mat-raised-button
+              color="danger"
+              (click)="removeSchedule(id)"
+              [disabled]="disabled"
+            >
+              Gỡ
+            </button>
+          </mat-expansion-panel>
+        </div>
+      </ng-template>
+
+      <ng-container
+        *ngFor="let schedule of data_selected_edit; index as i"
+        [ngTemplateOutlet]="existMovingSchedule"
+        [ngTemplateOutletContext]="{
+          index: i,
+          id: schedule.id,
+          driverName: schedule.driverName,
+          vehiclePlate: schedule.vehiclePlate,
+          singlePrice: schedule.singlePrice,
+          phoneNumber: schedule.phoneNumber,
+          description: schedule.description
+        }"
+      >
+      </ng-container>
+
+      <ng-container
+        *ngFor="let schedule of movingScheduleList; index as i"
+        [ngTemplateOutlet]="inputMovingSchedule"
+        [ngTemplateOutletContext]="{
+          index: i,
+          id: schedule.id,
+          driverName: schedule.driverName,
+          vehiclePlate: schedule.vehiclePlate,
+          singlePrice: schedule.singlePrice,
+          phoneNumber: schedule.phoneNumber,
+          description: schedule.description
+        }"
+      >
+      </ng-container>
+    </div>
+
+    <div
+      class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form"
+      *ngIf="movingScheduleEdit === null && !disabled"
+    >
+      <div class="row">
+        <h2
+          mat-form-label
+          style="
+            font-weight: heavy;
+            font-size: 16px;
+            margin-bottom: 0px;
+            margin-left: 20px;
+          "
+        >
+          Thêm thông tin lịnh trình di chuyển
+        </h2>
+      </div>
+
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Loại phương tiện</mat-label>
+          <select matNativeControl required (change)="changeType($event)">
+            <option value="0">Xe khách</option>
+            <option value="1">Máy bay</option>
+            <option value="2">Tàu hỏa</option>
+            <option value="3">Tàu biển</option>
+            <option value="4">Phương tiện di chuyển địa phương</option>
+          </select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+        <mat-form-field
+          class="example-chip-list"
+          appearance="outline"
+          class="full-width-input"
+        >
+          <mat-label>Danh sách đối tác</mat-label>
+          <mat-chip-grid #chipGrid aria-label="Fruit selection">
+            <mat-chip-row
+              *ngFor="let moving of movingNameList"
+              (removed)="remove(moving)"
+              style="font-size: 16px"
+            >
+              {{ onDisplayName(moving) }}
+              <button matChipRemove [attr.aria-label]="'remove ' + moving">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          </mat-chip-grid>
+
+          <input
+            *ngIf="movingNameList.length < 1"
+            placeholder="Chọn dịch vụ"
+            #movingInput
+            [formControl]="movingCtrl"
+            [matChipInputFor]="chipGrid"
+            [matAutocomplete]="auto"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="add($event)"
+          />
+
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            (optionSelected)="selected($event)"
+            (optionsScroll)="onScroll($event)"
+          >
+            <mat-option
+              *ngFor="let moving of data"
+              [value]="moving"
+              [disabled]="isChecked(moving)"
+            >
+              <div>
+                <div style="font-weight: bold">
+                  {{ onDisplayName(moving.branchName) }}
+                  <mat-icon>{{ isChecked(moving) && "checked" }}</mat-icon>
+                </div>
+
+                <small>{{ onDisplayAtr(moving) }}</small>
+              </div>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="movingNameList.length >= 1" [formGroup]="movingFormGroup">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Người điều khiển phương tiện</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: Bồ Công Anh"
+              formControlName="driverName"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.movingFormGroup.get('driverName')?.errors &&
+                movingFormGroup.get('driverName')?.touched
+              "
+              [formGroup]="movingFormGroup"
+              [formGroupControlName]="'driverName'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Tên hãng</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: Bồ Công Anh"
+              formControlName="branchName"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.movingFormGroup.get('branchName')?.errors &&
+                movingFormGroup.get('branchName')?.touched
+              "
+              [formGroup]="movingFormGroup"
+              [formGroupControlName]="'branchName'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Biển số phương tiện</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: 0123145342"
+              formControlName="vehiclePlate"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.movingFormGroup.get('vehiclePlate')?.errors &&
+                movingFormGroup.get('vehiclePlate')?.touched
+              "
+              [formGroup]="movingFormGroup"
+              [formGroupControlName]="'vehiclePlate'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Số điện thoại hỗ trợ</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: 0123145342"
+              formControlName="phoneNumber"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.movingFormGroup.get('phoneNumber')?.errors &&
+                movingFormGroup.get('phoneNumber')?.touched
+              "
+              [formGroup]="movingFormGroup"
+              [formGroupControlName]="'phoneNumber'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Nơi xuất phát</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: Hà Nội"
+              formControlName="startingPlace"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.movingFormGroup.get('startingPlace')?.errors &&
+                movingFormGroup.get('startingPlace')?.touched
+              "
+              [formGroup]="movingFormGroup"
+              [formGroupControlName]="'startingPlace'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Nơi đến</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: Đà Nẵng"
+              formControlName="headingPlace"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.movingFormGroup.get('headingPlace')?.errors &&
+                movingFormGroup.get('headingPlace')?.touched
+              "
+              [formGroup]="movingFormGroup"
+              [formGroupControlName]="'headingPlace'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Giá đơn vé trung bình</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: 180.000đ"
+              formControlName="singlePrice"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.movingFormGroup.get('singlePrice')?.errors &&
+                movingFormGroup.get('singlePrice')?.touched
+              "
+              [formGroup]="movingFormGroup"
+              [formGroupControlName]="'singlePrice'"
+            ></app-validation>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="movingScheduleEdit == null && movingNameList.length >= 1">
+        <div
+          class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form"
+          style="display: flex; flex-direction: column !important; flex-wrap: 1"
+        >
+          <app-tiny-mce-editor
+            style="width: 90% !important"
+            [blobName]="getScheduleEditId()"
+            [containerName]="'movingschedule-content-container'"
+            (result)="getTinyMceResult($event)"
+          ></app-tiny-mce-editor>
+        </div>
+
+        <div
+          class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form"
+          style="
+            display: flex;
+            flex-direction: row !important;
+            flex-wrap: 1;
+            margin-left: 50px;
+            align-self: start;
+          "
+        >
+          <div style="margin-right: 20px">
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="addToSchedule()"
+            >
+              Thêm
+            </button>
+          </div>
+
+          <div>
+            <button
+              mat-raised-button
+              color="warn"
+              type="button"
+              (click)="this.formReset()"
+            >
+              Khôi phục
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="movingScheduleEdit != null && this.movingNameList.length < 1"
+      class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form"
+    >
+      <div class="row">
+        <h4
+          mat-form-label
+          style="font-weight: bold; text-decoration: underline"
+        >
+          Chỉnh sửa thông tin lịch trình
+        </h4>
+      </div>
+
+      <div [formGroup]="editMovingFormGroup">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Người điều khiển phương tiện</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: Bồ Công Anh"
+              formControlName="driverName"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.editMovingFormGroup.get('driverName')?.errors &&
+                editMovingFormGroup.get('driverName')?.touched
+              "
+              [formGroup]="editMovingFormGroup"
+              [formGroupControlName]="'driverName'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Tên hãng</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: Bồ Công Anh"
+              formControlName="branchName"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.editMovingFormGroup.get('branchName')?.errors &&
+                editMovingFormGroup.get('branchName')?.touched
+              "
+              [formGroup]="editMovingFormGroup"
+              [formGroupControlName]="'branchName'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Số điện thoại hỗ trợ</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: 0432423423"
+              formControlName="phoneNumber"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.editMovingFormGroup.get('phoneNumber')?.errors &&
+                editMovingFormGroup.get('phoneNumber')?.touched
+              "
+              [formGroup]="editMovingFormGroup"
+              [formGroupControlName]="'phoneNumber'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Nơi xuất phát</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: Hà Nội"
+              formControlName="startingPlace"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.editMovingFormGroup.get('startingPlace')?.errors &&
+                editMovingFormGroup.get('startingPlace')?.touched
+              "
+              [formGroup]="editMovingFormGroup"
+              [formGroupControlName]="'startingPlace'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Nơi đến</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: Đà Nẵng"
+              formControlName="headingPlace"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.editMovingFormGroup.get('headingPlace')?.errors &&
+                editMovingFormGroup.get('headingPlace')?.touched
+              "
+              [formGroup]="editMovingFormGroup"
+              [formGroupControlName]="'headingPlace'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Giá đơn vé trung bình</mat-label>
+            <input
+              matInput
+              fullwidth
+              placeholder="Vd: 180.000đ"
+              formControlName="singlePrice"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="
+                this.editMovingFormGroup.get('singlePrice')?.errors &&
+                editMovingFormGroup.get('singlePrice')?.touched
+              "
+              [formGroup]="editMovingFormGroup"
+              [formGroupControlName]="'singlePrice'"
+            ></app-validation>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="movingScheduleEdit != null">
+        <div
+          class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form"
+          style="display: flex; flex-direction: column !important; flex-wrap: 1"
+        >
+          <app-tiny-mce-editor
+            style="width: 90% !important"
+            [blobName]="getScheduleEditId()"
+            [containerName]="'movingschedule-content-container'"
+            (result)="getTinyMceResult($event)"
+          ></app-tiny-mce-editor>
+        </div>
+
+        <div
+          class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form"
+          style="
+            display: flex;
+            flex-direction: row !important;
+            flex-wrap: 1;
+            margin-left: 50px;
+            align-self: start;
+          "
+        >
+          <div style="margin-right: 20px">
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="editToSchedulesList()"
+              [disabled]="disabled"
+            >
+              Lưu
+            </button>
+          </div>
+
+          <div>
+            <button
+              mat-raised-button
+              color="warn"
+              type="button"
+              (click)="cancelEditSchedule()"
+              [disabled]="disabled"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

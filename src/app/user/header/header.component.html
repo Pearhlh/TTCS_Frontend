@@ -1,0 +1,396 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+
+<div class="container-fluid" #header>
+  <!-- Nav tabs -->
+  <div class="page-title" (click)="navigateUrl('/main-page')">
+    <!-- <img
+      src="{{ getBlobUrl() + '/start-container/tour_logo.png' }}"
+      class="img-logo"
+      style="border: 2px solid black; border-radius: 10px; margin-right: 20px"
+    /> -->
+
+    <h3
+      style="
+        font-size: 35px !important;
+        font-family: Ubuntu sans-serif;
+        padding-top: 16px;
+      "
+    >
+      Vietnam Tourist
+    </h3>
+  </div>
+
+  <div class="searchInput">
+    <mat-form-field
+      appearance="outline"
+      class="full-width-input"
+      style="margin-top: 20px"
+    >
+      <input
+        #searchInput
+        matInput
+        [formControl]="searchControl"
+        type="text"
+        fullwidth
+        name="search"
+        id="search"
+        placeholder="Tìm kiếm sản phẩm"
+      />
+    </mat-form-field>
+
+    <button
+      mat-fab
+      color="primary"
+      style="margin-left: 10px"
+      (click)="navigateSearchUrl('search-page')"
+    >
+      <i class="fa fa-search" aria-hidden="true" style="color: white"></i>
+    </button>
+  </div>
+
+  <div style="display: flex; flex-direction: row; align-items: center">
+    <button
+      mat-mini-fab
+      ghost
+      status="primary"
+      *ngIf="notifyUnreadNumber <= 0"
+      style="background-color: whitesmoke; margin-right: 10px"
+      (click)="openNotificationNav()"
+    >
+      <i
+        class="fa fa-bell"
+        aria-hidden="true"
+        style="font-size: 22px; color: rgb(105, 104, 104)"
+      ></i>
+    </button>
+
+    <button
+      mat-mini-fab
+      ghost
+      *ngIf="notifyUnreadNumber > 0"
+      status="primary"
+      matBadge="{{ notifyUnreadNumber }}"
+      matBadgeColor="warn"
+      style="background-color: whitesmoke; margin-right: 10px"
+      (click)="openNotificationNav()"
+    >
+      <i
+        class="fa fa-bell"
+        aria-hidden="true"
+        style="font-size: 22px; color: rgb(105, 104, 104)"
+      ></i>
+    </button>
+
+    <mat-menu
+      #beforeNotifyMenu="matMenu"
+      xPosition="before"
+      class="notification"
+    >
+    </mat-menu>
+
+    <button
+      [matMenuTriggerFor]="menu"
+      mat-mini-fab
+      color="primary"
+      style="margin: 0 10px 0"
+    >
+      <img src="{{ avatarUrl }}" alt="Avatar" class="avatar" />
+    </button>
+  </div>
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="userInfo()">Thông tin tài khoản</button>
+    <button mat-menu-item (click)="tourReceipt()">Tour đã đặt</button>
+    <button mat-menu-item (click)="navigateUrl('moving/receipt/list')">
+      Dịch vụ di chuyển đã đặt
+    </button>
+    <button mat-menu-item (click)="navigateUrl('staying/receipt/list')">
+      Khách sạn/Homestay đã đặt
+    </button>
+    <button mat-menu-item (click)="signOut()">Đăng xuất</button>
+  </mat-menu>
+
+  <div
+    id=".autocomplete-search"
+    #autocompleteSearch
+    class="autocomplete-search"
+    (appOutsideClick)="outsideAutoCompleteSearchClick($event)"
+  >
+    <h6 id="search-title">Kết quả tìm kiếm</h6>
+    <div class="searchContent">
+      <app-tourish-auto-search-card
+        *ngFor="let tour of tourList"
+        [id]="tour.id ?? ''"
+        [tourName]="tour.tourName"
+        [tourPrice]="getTotalPrice(tour)"
+        style="width: 100%"
+      ></app-tourish-auto-search-card>
+      <h6 *ngIf="this.tourLength <= 0 && !this.isSearchLoading">
+        Không có kết quả phù hợp
+      </h6>
+      <h6 *ngIf="this.isSearchLoading">Đang tìm kiếm</h6>
+    </div>
+  </div>
+</div>
+
+<div
+  id="mySidenav"
+  #mySidenav
+  class="sidenav"
+  (appOutsideClick)="outsideNavClick($event)"
+>
+  <div class="title-nav">
+    <button
+      mat-stroked-button
+      (click)="navMenuClick()"
+      style="margin-left: 0px"
+    >
+      <i
+        class="fa fa-bars"
+        style="font-size: 22px; color: rgb(105, 104, 104)"
+        aria-hidden="true"
+      ></i>
+    </button>
+    <h6
+      *ngIf="isNavOpen"
+      style="
+        font-size: 24px;
+        font-weight: bolder;
+        color: white;
+        padding: 20px 0px 10px;
+        white-space: nowrap;
+      "
+    >
+      Menu
+    </h6>
+  </div>
+
+  <div class="sideNavContent" style="width: 100%" *ngIf="isNavOpen">
+    <div class="sidenavCategory">
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h6
+              style="
+                font-size: 16px;
+                padding-bottom: 0 !important;
+                font-weight: bold;
+                margin-bottom: 0 !important;
+                color: whitesmoke;
+              "
+            >
+              Thể loại tour
+            </h6>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div
+          ngbNav
+          #nav="ngbNav"
+          [(activeId)]="activeItem"
+          class="nav-pills flex-column"
+          orientation="vertical"
+        >
+          <ng-container
+            ngbNavItem="{{ category.id }}"
+            *ngFor="let category of categoryList"
+          >
+            <button
+              class="nav-button"
+              ngbNavLink
+              [matTooltip]="category.name"
+              (click)="navigateCategoryUrl('search-page', category.name)"
+            >
+              {{ category.name }}
+            </button>
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+    </div>
+
+    <div class="sidenavCategory">
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h6
+              style="
+                font-size: 16px;
+                padding-bottom: 0 !important;
+                font-weight: bold;
+                margin-bottom: 0 !important;
+                color: whitesmoke;
+              "
+            >
+              Dịch vụ
+            </h6>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div
+          ngbNav
+          #nav="ngbNav"
+          [(activeId)]="activeItem"
+          class="nav-pills flex-column"
+          orientation="vertical"
+        >
+          <ng-container ngbNavItem="1st">
+            <button
+              class="nav-button"
+              ngbNavLink
+              (click)="navigateServiceUrl('service-search-page', 'moving')"
+            >
+              Vé di chuyển
+            </button>
+          </ng-container>
+          <ng-container ngbNavItem="2nd">
+            <button
+              class="nav-button"
+              ngbNavLink
+              (click)="navigateServiceUrl('service-search-page', 'staying')"
+            >
+              Đặt trước khách sạn/Homestay
+            </button>
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+    </div>
+
+    <div class="sidenavCategory">
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h6
+              style="
+                font-size: 16px;
+                padding-bottom: 0 !important;
+                font-weight: bold;
+                margin-bottom: 0 !important;
+                color: whitesmoke;
+              "
+            >
+              Hóa đơn
+            </h6>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div
+          ngbNav
+          #nav="ngbNav"
+          [(activeId)]="activeItem"
+          class="nav-pills flex-column"
+          orientation="vertical"
+        >
+          <ng-container ngbNavItem="3rd">
+            <button
+              class="nav-button"
+              ngbNavLink
+              (click)="navigateNavUrl('receipt/list')"
+            >
+              Hóa đơn tour
+            </button>
+          </ng-container>
+
+          <ng-container ngbNavItem="4th">
+            <button
+              class="nav-button"
+              ngbNavLink
+              (click)="navigateNavUrl('moving/receipt/list')"
+            >
+              Hóa đơn vé di chuyển
+            </button>
+          </ng-container>
+
+          <ng-container ngbNavItem="5th">
+            <button
+              class="nav-button"
+              ngbNavLink
+              (click)="navigateNavUrl('staying/receipt/list')"
+            >
+              Hóa đơn đặt khách sạn/Homestay
+            </button>
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+    </div>
+
+    <!-- <div class="sidenavCategory">
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h6
+              style="
+                font-size: 16px;
+                padding-bottom: 0 !important;
+                font-weight: bold;
+                margin-bottom: 0 !important;
+                color: whitesmoke;
+              "
+            >
+              Thông báo
+            </h6>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div
+          ngbNav
+          #nav="ngbNav"
+          [(activeId)]="activeItem"
+          class="nav-pills flex-column"
+          orientation="vertical"
+        >
+          <ng-container ngbNavItem="6th">
+            <button ngbNavLink (click)="navigateUrl('notification/list')">
+              Danh sách thông báo
+            </button>
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+    </div> -->
+  </div>
+</div>
+
+<div
+  id="autocomplete-search"
+  #autocompleteSearch
+  class="autocomplete-search"
+  (appOutsideClick)="outsideAutoCompleteSearchClick($event)"
+>
+  <h6>Sản phẩm tìm kiếm</h6>
+  <div class="searchContent">
+    <app-tourish-auto-search-card
+      *ngFor="let tour of tourList"
+      [id]="tour.id ?? ''"
+      [tourName]="tour.tourName"
+      [tourPrice]="getTotalPrice(tour)"
+      (closeSearch)="closeSearch($event)"
+      style="width: 100%"
+    ></app-tourish-auto-search-card>
+    <h6 *ngIf="!isSearchLoading && tourList.length <= 0">
+      Không có kết quả phù hợp
+    </h6>
+    <h6 *ngIf="isSearchLoading">Đang tìm kiếm</h6>
+  </div>
+</div>
+
+<div
+  id="myNotification"
+  #notificationTab
+  class="notification-panel nowrap"
+  (appOutsideClick)="outsideNotificationClick($event)"
+>
+  <div class="title nowrap">
+    <h2 mat-form-label style="font-weight: heavy; margin-bottom: 0 !important">
+      Thông báo
+    </h2>
+    <div class="button-wrap">
+      <button mat-mini-fab color="accent" (click)="closeNotificationNav()">
+        <i class="fa fa-times" aria-hidden="true" style="color: white"></i>
+      </button>
+    </div>
+  </div>
+  <app-notification-pack
+    style="height: 90%; width: 100%"
+    (notifyUnreadNumber)="setNotifyUnread($event)"
+    [isNotifyOpen]="isNotifyOpen"
+    (closeNotifyTab)="closeNotifyInside($event)"
+  ></app-notification-pack>
+</div>

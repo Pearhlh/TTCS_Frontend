@@ -1,0 +1,10 @@
+<div>
+  <mat-error
+    *ngIf="
+      this.message.length > 0 && this.formGroup.get(formGroupControlName)?.errors &&
+      (formGroup.get(formGroupControlName)?.touched)
+    "
+  >
+    {{this.message}}
+  </mat-error>
+</div>

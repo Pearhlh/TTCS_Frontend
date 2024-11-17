@@ -1,0 +1,185 @@
+<div class="container" style="padding: 60px 0 60px">
+  <div
+    class="outlet"
+    style="
+      display: flex;
+      align-items: center;
+      width: 100%;
+      flex-direction: column !important;
+      background-color: white;
+    "
+  >
+    <mat-card-header style="justify-content: center; margin-top: 50px">
+      <h2 style="font-size: 24px">Đăng nhập</h2>
+      <h3 class="error-message">{{ errorMessage }}</h3>
+    </mat-card-header>
+
+    <div
+      class="row"
+      style="display: flex; flex-direction: row !important; flex-wrap: 1"
+    >
+      <div class="signInForm" size="medium" style="width: fit-content">
+        <form (ngSubmit)="formSubmit()" [formGroup]="signInformGroup">
+          <mat-card-content>
+            <div
+              class="row"
+              style="
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 20px;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+              "
+            >
+              <h3 style="font-size: 16px; margin-bottom: 0; font-weight: bold">
+                Tài khoản
+              </h3>
+              <mat-form-field appearance="outline" class="full-width-input">
+                <input
+                  matInput
+                  status="info"
+                  type="text"
+                  id="userName"
+                  placeholder="Tài khoản"
+                  formControlName="userName"
+              /></mat-form-field>
+            </div>
+            <div
+              class="row"
+              style="
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 20px;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+              "
+            >
+              <h3 style="font-size: 16px; margin-bottom: 0; font-weight: bold">
+                Mật khẩu
+              </h3>
+              <mat-form-field appearance="outline" class="full-width-input">
+                <input
+                  matInput
+                  status="info"
+                  [type]="passwordVisible ? 'text' : 'password'"
+                  id="password"
+                  placeholder="Mật khẩu"
+                  formControlName="password"
+                />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  (click)="
+                    onClickRevealPassword($event)
+                  "
+                  [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="!passwordVisible"
+                >
+                  <mat-icon>{{
+                    passwordVisible ? "visibility" : "visibility_off"
+                  }}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+
+            <div class="signInAction">
+              <mat-checkbox
+                class="remember-checkbox"
+                formControlName="isRememberMeCheck"
+                color="primary"
+                ><span style="margin-top: 5px"
+                  >Ghi nhớ đăng nhập</span
+                ></mat-checkbox
+              >
+
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                id="sign_in"
+                status="success"
+              >
+                Đăng nhập
+              </button>
+            </div>
+          </mat-card-content>
+        </form>
+      </div>
+
+      <div class="signInFormSide">
+        <h3 style="font-size: 16px; margin-bottom: 0; font-weight: bold">
+          Phương thức đăng nhập khác
+        </h3>
+        <asl-google-signin-button
+          type="standard"
+          size="medium"
+          text="signin_with"
+          width="400"
+          *ngIf="!isLogin()"
+          style="margin-bottom: 15px;"
+        >
+        </asl-google-signin-button>
+        
+        <button
+          type="button"
+          (click)="signInWithFB()"
+          class="btn btn-primary btn-block"
+        >
+        <i class="fa fa-facebook-official" aria-hidden="true"></i>  Đăng nhập với Facebook
+        </button>
+
+        <div
+          style="
+            display: flex;
+            border-bottom: 3px solid #696868;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            width: 93%;
+          "
+        ></div>
+
+        <h3 style="font-size: 16px; margin-bottom: 0; font-weight: bold">
+          Nếu chưa có tài khoản, hãy đăng kí
+        </h3>
+        <button
+          mat-button
+          color="primary"
+          (click)="navigateRegister()"
+          style="margin-bottom: 10px; ; justify-content: flex-start;"
+        >
+          Vào trang đăng kí
+        </button>
+        <div
+          style="
+            display: flex;
+            border-bottom: 3px solid #696868;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            width: 93%;
+          "
+        ></div>
+        <h3 style="font-size: 16px; margin-bottom: 0; font-weight: bold">
+          Quên mật khẩu? Bắm vào đây để khôi phục
+        </h3>
+        <button
+          mat-button
+          color="accent"
+          (click)="navigateReclaim()"
+          style="margin-bottom: 10px; text-align: left; justify-content: flex-start;"
+        >
+          Khôi phục tài khoản
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="row"
+      style="
+        display: flex;
+        flex-direction: column !important;
+        flex-wrap: 1;
+        align-items: center;
+      "
+    ></div>
+  </div>
+</div>

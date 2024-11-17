@@ -1,0 +1,232 @@
+<div class="container" style="padding: 0px 0 20px">
+  <div
+    style="
+      background-color: #2a3650;
+      padding: 15px 50px 0px;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    "
+  >
+    <h2 mat-form-label style="font-weight: heavy; color: white">
+      Chỉnh sửa thông báo
+    </h2>
+
+    <button
+      mat-flat-button
+      color="warn"
+      style="color: white; margin-bottom: 16px"
+      (click)="closeDialog()"
+    >
+      <i class="fa fa-times" aria-hidden="true"></i>
+    </button>
+  </div>
+  <div
+    class="outlet"
+    style="
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      flex-direction: column !important;
+    "
+  >
+    <div class="container-controller">
+      <div
+        class="row"
+        style="
+          display: flex;
+          flex-direction: row !important;
+          flex-wrap: 1;
+          margin-left: 90px !important;
+          margin-bottom: 20px !important;
+        "
+      >
+        <div>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="disabled = false"
+            *ngIf="disabled"
+          >
+            Sửa đổi
+          </button>
+        </div>
+
+        <div style="margin-right: 20px">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="formSubmit_edit_info()"
+            *ngIf="!disabled"
+          >
+            Lưu thay đổi
+          </button>
+        </div>
+
+        <div style="margin-right: 20px">
+          <button
+            mat-raised-button
+            color="danger"
+            (click)="disabled = true"
+            *ngIf="!disabled"
+          >
+            Hủy
+          </button>
+        </div>
+
+        <div>
+          <button
+            mat-raised-button
+            color="warn"
+            type="button"
+            (click)="formReset()"
+            *ngIf="!disabled"
+          >
+            Khôi phục ban đầu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="row"
+      style="display: flex; flex-direction: column !important; flex-wrap: 1"
+    >
+      <form [formGroup]="editformGroup_info">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+            <div class="row">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Mã code</mat-label>
+                <select
+                  matNativeControl
+                  placeholder="Vd: 0123456789"
+                  formControlName="contentCode"
+                >
+                  <option value="">Không</option>
+                  <option
+                    *ngFor="let notificationCode of successNotifyCode"
+                    value="{{ notificationCode.key }}"
+                  >
+                    {{ notificationCode.key }}: {{ notificationCode.value }}
+                  </option>
+                </select>
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.editformGroup_info.get('contentCode')?.errors &&
+                    (editformGroup_info.get('contentCode')?.touched ||
+                      isSubmitted)
+                  "
+                  [formGroup]="editformGroup_info"
+                  [formGroupControlName]="'contentCode'"
+                ></app-validation>
+              </div>
+            </div>
+
+            <div class="row">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Đã đọc</mat-label>
+                <select
+                  matNativeControl
+                  placeholder="Vd: 0123456789"
+                  formControlName="isRead"
+                >
+                  <option value="0">Không</option>
+                  <option value="1">Có</option>
+                </select>
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.editformGroup_info.get('isRead')?.errors &&
+                    (editformGroup_info.get('isRead')?.touched || isSubmitted)
+                  "
+                  [formGroup]="editformGroup_info"
+                  [formGroupControlName]="'isRead'"
+                ></app-validation>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+            <div class="row">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Đã xóa</mat-label>
+                <select
+                  matNativeControl
+                  placeholder="Vd: 0123456789"
+                  formControlName="isDeleted"
+                >
+                  <option value="0">Không</option>
+                  <option value="1">Có</option>
+                </select>
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.editformGroup_info.get('isDeleted')?.errors &&
+                    (editformGroup_info.get('isDeleted')?.touched ||
+                      isSubmitted)
+                  "
+                  [formGroup]="editformGroup_info"
+                  [formGroupControlName]="'isDeleted'"
+                ></app-validation>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form"
+            style="margin-left: 30px !important; max-width: 44% !important"
+          >
+            <user-multiselect-autocomplete
+              [data_selected]="this.notification.userReceiver"
+              (result)="selectChangeReceiver($event)"
+            ></user-multiselect-autocomplete>
+          </div>
+        </div>
+
+        <div
+          class="row"
+          style="
+            display: flex;
+            flex-direction: column !important;
+            flex-wrap: 1;
+            margin-left: 60px !important;
+          "
+        >
+          <div
+            class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form"
+            style="padding-left: 0"
+          >
+            <mat-form-field style="width: 90%">
+              <textarea
+                matInput
+                [readonly]="disabled"
+                class="form-control"
+                id="content"
+                placeholder="Nội dung"
+                formControlName="content"
+                rows="10"
+              ></textarea>
+            </mat-form-field>
+            <div style="margin-top: -20px; margin-bottom: 10px">
+              <app-validation
+                *ngIf="
+                  this.editformGroup_info.get('content')?.errors &&
+                  (editformGroup_info.get('content')?.touched || isSubmitted)
+                "
+                [formGroup]="editformGroup_info"
+                [formGroupControlName]="'content'"
+              ></app-validation>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

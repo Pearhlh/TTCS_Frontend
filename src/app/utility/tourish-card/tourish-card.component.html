@@ -1,0 +1,65 @@
+<mat-card class="example-card" (click)="navigateToDetail()">
+  <div class="image-container">
+    <img
+      mat-card-image
+      src="{{ this.firstImageUrl }}"
+      (error)="handleImageError($event)"
+      alt="Ảnh miêu tả"
+    />
+  </div>
+  <mat-card-content>
+    <p class="tour-name" [matTooltip]="tourName">{{ getTourName(tourName) }}</p>
+
+    <div
+      class="row"
+      style="
+        margin-left: 0 !important;
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        width: 100%;
+      "
+    >
+      <p class="tour-judge" *ngIf="judgeNumber > 0">
+        {{ " " + judgeNumber }} đánh giá
+      </p>
+      <p class="tour-judge" style="margin-right: 7px" *ngIf="judgeNumber > 0">
+        |
+      </p>
+      <p
+        class="tour-judge"
+        style="margin-right: 7px; font-style: italic; font-weight: bold"
+      >
+        {{ getRateString(score) }}
+      </p>
+      <mat-card
+        *ngIf="judgeNumber > 0"
+        style="
+          width: 40px;
+          height: 20px;
+          text-align: center;
+          color: white;
+          margin-right: 7px;
+          padding-top: 2px;
+        "
+        [ngStyle]="{ 'background-color': getRateColor(score) }"
+        >{{ score + " / 5" }}</mat-card
+      >
+    </div>
+
+    <div
+      class="row"
+      style="
+        margin-left: 0 !important;
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        width: 100%;
+        margin-top: 20px;
+      "
+    >
+      <p class="tour-price">{{ formatVNCurrency(tourPrice) }}</p>
+      <p class="tour-history">{{ customerNumber === 0 ? "Chưa có khách đặt" : customerNumber + " khách đã đặt"}} </p>
+    </div>
+  </mat-card-content>
+</mat-card>

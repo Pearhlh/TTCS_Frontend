@@ -1,0 +1,27 @@
+<div
+  class="notify-pack"
+  style="overflow-y: auto !important; height: 100% !important"
+  #notifyPack
+>
+  <app-notification-single
+    #singleNotify
+    style="width: 100% !important;"
+    *ngFor="let notification of notificationList"
+    [notification]="notification"
+    [isNotifyOpen]="isNotifyOpen"
+    [viewChildPack]="notifyPackContainer"
+    (isInView)="changeToReadState($event)"
+    [ngStyle]="{ width: signleNotifyWidth }"
+    (isOnClick)="handleNotifyOnClick($event)"
+  >
+  </app-notification-single>
+
+  <div
+    class="single-notification"
+    *ngIf="firstLoading"
+    style="display: flex; flex-direction: row; align-items: center"
+  >
+    <span style="margin-right: 5px">Đang tải</span>
+    <mat-spinner [diameter]="20"></mat-spinner>
+  </div>
+</div>

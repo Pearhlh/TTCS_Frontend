@@ -1,0 +1,40 @@
+<div class="single-comment">
+  <div class="image">
+    <img
+      src="{{ avatarLink }}"
+      alt="Avatar"
+      class="avatar"
+      style="border-radius: 50%; margin-bottom: 10px"
+    />
+    <span style="font-weight: bold; text-wrap: break-word">{{
+      senderName
+    }}</span>
+  </div>
+
+  <div class="content">
+    <div class="content-description">
+      <app-tiny-mce-editor
+        [blobName]="blobName"
+        [containerName]="blobContainerName"
+        [editable]="false"
+        style="width: 100%; height: fit-content"
+      ></app-tiny-mce-editor>
+
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="menu"
+        aria-label="Example icon-button with a menu"
+      >
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item style="color: red;" (click)="onDeleteComment()" [disabled]="!isUserComment">
+          Xóa
+        </button>
+      </mat-menu>
+    </div>
+    <div class="time">
+      <span>{{ getTime(sendTime) }}</span>
+    </div>
+  </div>
+</div>

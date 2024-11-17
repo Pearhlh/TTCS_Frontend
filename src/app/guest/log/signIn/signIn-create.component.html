@@ -1,0 +1,283 @@
+<div class="container" style="padding: 60px 0 60px">
+  <div
+    class="outlet"
+    style="
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      flex-direction: column !important;
+      background-color: white;
+    "
+  >
+    <div
+      class="row"
+      style="
+        display: flex;
+        flex-direction: column !important;
+        flex-wrap: 1;
+        align-items: center;
+        margin-left: 0 !important;
+      "
+    >
+      <div class="row" style="align-self: flex-start !important">
+        <button
+          mat-button
+          color="primary"
+          (click)="toLoginPage()"
+          style="margin-bottom: 10px"
+        >
+          Quay lại
+        </button>
+      </div>
+
+      <div class="row">
+        <h2
+          mat-form-label
+          style="font-weight: heavy; margin-left: 0 !important"
+        >
+          Đăng kí tài khoản
+        </h2>
+      </div>
+
+      <mat-stepper [linear]="true" #stepper>
+        <mat-step label="Điền tên tài khoản">
+          <form [formGroup]="createformGroup">
+            <div class="row" *ngIf="accountMessage.length > 0">
+              <mat-card style="background-color: #f8d7da">
+                <mat-card-content style="color: #b55529"
+                  >Tài khoản đã tồn tại</mat-card-content
+                >
+              </mat-card>
+            </div>
+
+            <div class="row" style="margin-top: 20px;">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Tài khoản</mat-label>
+                <input
+                  #accountInput
+                  matInput
+                  placeholder="Vd: 10"
+                  formControlName="userName"
+                  required
+                />
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.createformGroup.get('userName')?.errors &&
+                    (createformGroup.get('userName')?.touched || submited)
+                  "
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'userName'"
+                ></app-validation>
+              </div>
+            </div>
+
+            <div class="row">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Tên người dùng</mat-label>
+                <input
+                  #accountInput
+                  matInput
+                  placeholder="Vd: Nguyễn Đức Khang"
+                  formControlName="fullName"
+                  required
+                />
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.createformGroup.get('fullName')?.errors &&
+                    (createformGroup.get('fullName')?.touched || submited)
+                  "
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'fullName'"
+                ></app-validation>
+              </div>
+            </div>
+
+            <div class="row">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Vai trò</mat-label>
+                <select matNativeControl required formControlName="role">
+                  <option value="1">Người dùng</option>
+                  <option value="2">Nhân viên quản lý</option>
+                </select>
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="submited"
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'role'"
+                ></app-validation>
+              </div>
+            </div>
+
+            <div>
+              <button mat-button matStepperNext [disabled]="!isContinueStep1">
+                Tiếp tục
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+        <mat-step label="Điền thông tin liên lạc">
+          <form [formGroup]="createformGroup">
+            <div class="row" style="margin-top: 20px;">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Email</mat-label>
+                <input
+                  matInput
+                  placeholder="Vd: khangVd123@gmail.com"
+                  formControlName="email"
+                />
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.createformGroup.get('email')?.errors &&
+                    (createformGroup.get('email')?.touched || submited)
+                  "
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'email'"
+                ></app-validation>
+              </div>
+            </div>
+            <div class="row">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Địa chỉ</mat-label>
+                <input
+                  matInput
+                  placeholder="Vd: số 10 Nguyễn Chí Thanh"
+                  formControlName="address"
+                />
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.createformGroup.get('address')?.errors &&
+                    (createformGroup.get('address')?.touched || submited)
+                  "
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'address'"
+                ></app-validation>
+              </div>
+            </div>
+            <div class="row">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Số điện thoại</mat-label>
+                <input
+                  matInput
+                  placeholder="Vd: 012345678"
+                  formControlName="phoneNumber"
+                />
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.createformGroup.get('phoneNumber')?.errors &&
+                    (createformGroup.get('phoneNumber')?.touched || submited)
+                  "
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'phoneNumber'"
+                ></app-validation>
+              </div>
+            </div>
+
+            <div>
+              <button mat-button matStepperPrevious>Trước</button>
+              <button
+                mat-button
+                matStepperNext
+                [disabled]="
+                  this.createformGroup.get('phoneNumber')?.invalid ||
+                  this.createformGroup.get('address')?.invalid ||
+                  !isContinueStep2
+                "
+              >
+                Tiếp tục
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+        <mat-step label="Điền mật khẩu">
+          <form [formGroup]="createformGroup">
+            <div
+              class="row" 
+              *ngIf="createformGroup.errors?.['matchPassword'] &&  !this.createformGroup.get('rePassword')?.invalid"
+            >
+              <mat-card style="background-color: #f8d7da">
+                <mat-card-content style="color: #b55529"
+                  >Mật khẩu không khớp</mat-card-content
+                >
+              </mat-card>
+            </div>
+            <div class="row" style="margin-top: 20px;">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Điền mật khẩu</mat-label>
+                <input
+                  matInput
+                  placeholder="Vd: 10"
+                  formControlName="password"
+                  type="password"
+                />
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.createformGroup.get('password')?.errors &&
+                    (createformGroup.get('password')?.touched || submited)
+                  "
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'password'"
+                ></app-validation>
+              </div>
+            </div>
+            <div class="row">
+              <mat-form-field appearance="outline" class="full-width-input">
+                <mat-label>Điền lại mật khẩu</mat-label>
+                <input
+                  matInput
+                  placeholder="Vd: 10"
+                  formControlName="rePassword"
+                  type="password"
+                />
+              </mat-form-field>
+              <div class="validation-container">
+                <app-validation
+                  *ngIf="
+                    this.createformGroup.get('rePassword')?.errors &&
+                    (createformGroup.get('rePassword')?.touched || submited)
+                  "
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'rePassword'"
+                ></app-validation>
+              </div>
+            </div>
+            <div>
+              <button mat-button matStepperPrevious>Trước</button>
+              <button
+                mat-button
+                (click)="formSubmit_create_info()"
+                [disabled]="
+                  this.createformGroup.get('password')?.invalid ||
+                  this.createformGroup.get('rePassword')?.invalid || createformGroup.errors?.['matchPassword']
+                "
+              >
+                Tiếp tục
+              </button>
+            </div>
+          </form>
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Hoàn thành</ng-template>
+          <p>Đăng kí thành công. Hẫy quay lại trang đăng nhập.</p>
+          <div>
+            <button mat-button (click)="toLoginPage()">Quay lại</button>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    </div>
+  </div>
+</div>

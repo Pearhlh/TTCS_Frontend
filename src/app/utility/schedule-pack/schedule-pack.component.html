@@ -1,0 +1,37 @@
+<div class="pack-container" id="pack-container" #packContainer>
+  <div class="schedule-pack-description">
+    <h3>{{ getTitle() }}</h3>
+  </div>
+  <div class="schedule-pack">
+    <app-schedule-card
+      *ngFor="let schedule of movingScheduleList"
+      [id]="schedule.id ?? ''"
+      [scheduleName]="schedule.name ?? ''"
+      [scheduleType]="1"
+      [contactId]="schedule.transportId"
+      [schedulePrice]="schedule.singlePrice ?? 0"
+      [serviceScheduleList]="schedule.serviceScheduleList ?? []"
+      [startingPlace]="schedule.startingPlace"
+      [headingPlace]="schedule.headingPlace"
+      style="width: 48%"
+    ></app-schedule-card>
+
+    <app-schedule-card
+      *ngFor="let schedule of stayingScheduleList"
+      [id]="schedule.id ?? ''"
+      [scheduleName]="schedule.name ?? ''"
+      [scheduleType]="2"
+      [contactId]="schedule.restHouseBranchId"
+      [schedulePrice]="schedule.singlePrice ?? 0"
+      [serviceScheduleList]="schedule.serviceScheduleList ?? []"
+      [address]="schedule.address"
+      style="width: 48%"
+    ></app-schedule-card>
+  </div>
+
+  <div class="schedule-button">
+    <button mat-stroked-button style="color: rgb(4, 201, 201); font-size: 16px" (click)="navigateCategoryUrl('service-search-page', this.scheduleType, this.objectType)">
+      Xem thêm
+    </button>
+  </div>
+</div>

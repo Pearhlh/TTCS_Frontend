@@ -1,0 +1,38 @@
+.outlet {
+  background-color: #fafafa;
+  padding: 30px 50px 0px;
+}
+
+.container {
+  width: 100%;
+}
+
+.container-controller {
+  padding: 0px 10px 10px !important;
+  display: flex;
+  flex-direction: row;
+  background-color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.edit-form {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.input-group {
+  width: 100% !important;
+  margin-bottom: 0px;
+}
+
+.full-width-input {
+  width: 90% !important;
+}
+
+.create-form{
+  width: 100%;
+}
+
+mat-error {
+  margin-top: -5px;
+  margin-bottom: 10px;
+}

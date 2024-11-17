@@ -1,0 +1,68 @@
+.user-main {
+  transition: 0.5s;
+  opacity: 1;
+  margin-left: 60px;
+  position: relative;
+  height: 100%;
+}
+
+.container-fluid {
+  padding-top: 2% !important;
+  background-color: #fafafa;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+  padding-bottom: 2%;
+  position: relative;
+}
+
+.outer-chat-container {
+  z-index: 1;
+  /* background-color: #fafafa !important; */
+  opacity: 1;
+  position: -webkit-sticky; /* For Safari */
+  position: fixed;
+  right: 0 !important;
+  display: flex;
+  align-self: flex-end;
+  bottom: 0;
+  transform: translate(0, 0);
+  height: 56px;
+  width: 350px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+app-chat {
+  overflow-y: auto;
+  z-index: 1000;
+  right: 0;
+  position: absolute;
+  right: 0;
+}
+
+app-footer {
+  z-index: 0;
+}
+
+.validation-container {
+  margin-top: -15px !important;
+  margin-bottom: 15px !important;
+}
+
+@media only screen and (min-height: 1000px) {
+  .container-fluid {
+    min-height: 860px !important;
+  }
+}
+
+@media only screen and (min-height: 900px) {
+  .container-fluid {
+    min-height: 800px !important;
+  }
+}
+
+@media only screen and (max-height: 680px) {
+  .container-fluid {
+    min-height: 560px !important;
+  }
+}

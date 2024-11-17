@@ -1,0 +1,72 @@
+<div class="pack-container" id="pack-container" #packContainer>
+  <div class="title">
+    <h4 class="tour-name">Bình luận</h4>
+  </div>
+  <div class="comment-pack">
+    <div class="send-rate">
+      <button
+        *ngIf="isUserLogin()"
+        mat-stroked-button
+        style="color: rgb(4, 201, 201); font-size: 16px"
+        (click)="sendComment()"
+        [disabled]="isSending"
+      >
+        {{ !isSending ? "Gửi" : "Đang gửi" }}
+      </button>
+
+      <app-star-rating
+        *ngIf="isUserLogin()"
+        [rating]="rating"
+        [starCount]="starCount"
+        [tourishPlanId]="tourishPlanId"
+        (ratingUpdated)="onRatingChanged($event)"
+      ></app-star-rating>
+    </div>
+    <app-tiny-mce-editor
+      *ngIf="isUserLogin()"
+      [blobName]="''"
+      [containerName]="''"
+      (result)="getTinyMceResult($event)"
+      style="width: 100%; z-index: 0"
+    ></app-tiny-mce-editor>
+    <h3 *ngIf="!isUserLogin()" style="font-size: 25px; font-weight: bold">
+      Vui lòng đăng nhập để bình luận
+    </h3>
+  </div>
+
+  <div class="title">
+    <h4 class="tour-name">Danh sách bình luận</h4>
+  </div>
+
+  <div class="comment-list">
+    <app-comment-tour-single
+      *ngFor="let tourComment of tourishPLanCommentList"
+      style="width: 100%"
+      [blobName]="tourComment.id"
+      [isUserComment]="isUserComment(tourComment.userId)"
+      [blobContainerName]="'tourish-comment-container'"
+      [userId]="tourComment.userId"
+      [senderName]="tourComment.userName"
+      [sendTime]="tourComment.createDate"
+      (delete)="deleteComment($event)"
+    />
+    <h3
+      *ngIf="tourishPLanCommentList.length <= 0"
+      style="font-size: 25px; font-weight: bold"
+    >
+      <i class="fa fa-commenting-o" aria-hidden="true"></i> Không có bình luận
+    </h3>
+  </div>
+
+  <div class="comment-button">
+    <button
+      mat-stroked-button
+      style="color: rgb(4, 201, 201); font-size: 16px"
+      (click)="getMoreTourComment()"
+      [disabled]="isLoading"
+      *ngIf="canLoadMore"
+    >
+      Xem thêm
+    </button>
+  </div>
+</div>

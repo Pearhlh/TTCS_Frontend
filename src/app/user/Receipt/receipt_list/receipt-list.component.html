@@ -1,0 +1,303 @@
+<div class="container-fluid">
+  <div style="width: 100% !important">
+    <mat-card style="margin-bottom: 20px; padding: 10px 10px 20px">
+      <mat-card-header>
+        <mat-card-title>Danh sách tour đã đặt</mat-card-title>
+      </mat-card-header>
+    </mat-card>
+
+    <mat-card style="margin-bottom: 20px; padding: 0px 10px 0px">
+      <mat-card-content style="padding: 16px 16px 0px">
+        <h2 style="margin-bottom: 0">
+          <i
+            class="fa fa-exclamation-circle"
+            aria-hidden="true"
+            style="color: red"
+          ></i>
+          Lưu ý
+        </h2>
+        <mat-list>
+          <mat-list-item
+            >• Thanh toán chỉ có hiệu lực trong vòng từ 7 giờ sáng tới 23 giờ
+            chiều. Sau bảy ngày không thanh toán, hóa đơn sẽ bị
+            hủy.</mat-list-item
+          >
+          <mat-list-item
+            >• Hóa đơn khi mới đặt sẽ chuyển trạng thái có thể thanh toán sau
+            hai giờ.</mat-list-item
+          >
+          <mat-list-item
+            >• Sau khi hoàn thành chuyển khoản bằng mã QR, vui lòng không thoát
+            trang để hoàn thành việc cập nhật thông tin thanh
+            toán.</mat-list-item
+          >
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+
+    <div
+      class="outlet"
+      style="
+        width: 100%;
+        flex-direction: column !important;
+        background-color: white;
+        padding-top: 2%;
+        padding-left: 2%;
+      "
+    ></div>
+
+    <mat-tab-group
+      [selectedIndex]="active"
+      (selectedIndexChange)="tourStatusChange($event)"
+      style="background-color: white"
+    >
+      <mat-tab label="Hóa đơn mới tạo"> </mat-tab>
+      <mat-tab label="Hóa đơn chờ thanh toán"> </mat-tab>
+      <mat-tab label="Hóa đơn đã hoàn thành"> </mat-tab>
+      <mat-tab label="Hóa đơn đã hủy"> </mat-tab>
+    </mat-tab-group>
+
+    <div class="table-responsive">
+      <table
+        mat-table
+        [dataSource]="receiptList"
+        matSort
+        class="mat-elevation-z8"
+        (matSortChange)="announceSortChange($event)"
+        multiTemplateDataRows
+      >
+        <!-- Position Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>No.</th>
+          <td mat-cell *matCellDef="let element">
+            {{ getIndex(element.totalReceiptId) }}
+          </td>
+        </ng-container>
+
+        <!-- SS Column -->
+        <ng-container matColumnDef="tourName">
+          <th mat-header-cell *matHeaderCellDef>Tên tour</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.tourishPlan.tourName }}
+          </td>
+        </ng-container>
+
+        <!-- SS Column -->
+        <ng-container matColumnDef="singlePrice">
+          <th mat-header-cell *matHeaderCellDef>Giá đơn vé hiện tại</th>
+          <td mat-cell *matCellDef="let element">
+            {{ formatVNCurrency(getTotalPrice(element.tourishPlan)) }}
+          </td>
+        </ng-container>
+
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions">
+            &nbsp;
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <button
+              mat-icon-button
+              aria-label="expand row"
+              (click)="
+                expandedElement = expandedElement === element ? null : element;
+                $event.stopPropagation()
+              "
+            >
+              <mat-icon *ngIf="expandedElement !== element"
+                >keyboard_arrow_down</mat-icon
+              >
+              <mat-icon *ngIf="expandedElement === element"
+                >keyboard_arrow_up</mat-icon
+              >
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- "guestName",
+      "phoneNumber",
+      "totalTicket",
+      "discountFloat",
+      "discountAmount", -->
+
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container
+          matColumnDef="expandedDetail"
+          style="width: 100% !important"
+        >
+          <td
+            mat-cell
+            *matCellDef="let element"
+            [attr.colspan]="displayedColumnsWithExpand.length"
+          >
+            <div
+              [@detailExpand]="
+                element == expandedElement ? 'expanded' : 'collapsed'
+              "
+            >
+              <div
+                class="example-element-diagram"
+                style="display: flex; flex-direction: row"
+              >
+                <div
+                  class="receipt-info"
+                  style="width: 70px !important; min-width: 70px !important"
+                >
+                  <span style="font-weight: bold">STT</span>
+                </div>
+                <div class="receipt-info">
+                  <span style="font-weight: bold">Email nhận thông tin</span>
+                </div>
+                <div class="receipt-info">
+                  <span style="font-weight: bold">SĐT</span>
+                </div>
+                <div
+                  class="receipt-info"
+                  style="width: 150px !important; min-width: 150px !important"
+                >
+                  <span style="font-weight: bold"
+                    >Số vé (Người lớn > 10 tuổi)</span
+                  >
+                </div>
+                <div
+                  class="receipt-info"
+                  style="width: 150px !important; min-width: 150px !important"
+                >
+                  <span style="font-weight: bold">Số vé (Trẻ em)</span>
+                </div>
+                <div class="receipt-info">
+                  <span style="font-weight: bold">Tổng giá</span>
+                </div>
+
+                <div class="receipt-info">
+                  <span style="font-weight: bold">Trạng thái</span>
+                </div>
+
+                <div class="receipt-info">
+                  <span style="font-weight: bold">Ngày hoàn thành</span>
+                </div>
+
+                <div class="receipt-button"></div>
+
+                <div class="receipt-button"></div>
+              </div>
+
+              <div
+                class="example-element-diagram"
+                style="display: flex; flex-direction: row"
+                *ngFor="let fullReceipt of element.fullReceiptList; index as i"
+              >
+                <div
+                  class="receipt-info"
+                  style="width: 70px !important; min-width: 70px !important"
+                >
+                  <div>{{ i + 1 }}</div>
+                </div>
+                <div class="receipt-info">
+                  <div>{{ fullReceipt.email }}</div>
+                </div>
+                <div class="receipt-info">
+                  <div>{{ fullReceipt.phoneNumber }}</div>
+                </div>
+                <div
+                  class="receipt-info"
+                  style="width: 150px !important; min-width: 150px !important"
+                >
+                  <div>{{ fullReceipt.totalTicket }}</div>
+                </div>
+                <div
+                  class="receipt-info"
+                  style="width: 150px !important; min-width: 150px !important"
+                >
+                  <div>{{ fullReceipt.totalChildTicket }}</div>
+                </div>
+                <div class="receipt-info">
+                  <div>
+                    {{
+                      formatVNCurrency(
+                        getTotalPriceReceipt(element.tourishPlan, fullReceipt)
+                      )
+                    }}
+                  </div>
+                </div>
+
+                <div class="receipt-info">
+                  <div
+                    [style.color]="
+                      getPaymentStatusColor(fullReceipt.status + '')
+                    "
+                  >
+                    {{ getPaymentStatus(fullReceipt.status + "") }}
+                  </div>
+                </div>
+
+                <div class="receipt-info">
+                  <div>
+                    {{ getDateFormat(fullReceipt.completeDate ?? "") }}
+                  </div>
+                </div>
+
+                <div class="receipt-button">
+                  <button
+                    mat-flat-button
+                    [matTooltip]="'Thanh toán'"
+                    [disabled]="isPaymentDisable(fullReceipt.status + '')"
+                    (click)="
+                      callPayment(
+                        fullReceipt.fullReceiptId,
+                        fullReceipt.paymentId ?? ''
+                      )
+                    "
+                    color="primary"
+                  >
+                    <i class="fa fa-credit-card" aria-hidden="true"></i>
+                  </button>
+                </div>
+
+                <div class="receipt-button">
+                  <button
+                    [matTooltip]="'Xem thông tin'"
+                    mat-flat-button
+                    (click)="openEditDialog(fullReceipt.fullReceiptId)"
+                    style="background-color: #ffd740"
+                  >
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsWithExpand"></tr>
+        <tr
+          mat-row
+          *matRowDef="let element; columns: displayedColumnsWithExpand"
+          class="example-element-row"
+          [class.example-expanded-row]="expandedElement === element"
+          (click)="
+            expandedElement = expandedElement === element ? null : element
+          "
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['expandedDetail']"
+          class="example-detail-row"
+        ></tr>
+      </table>
+    </div>
+
+    <div class="empty" *ngIf="receiptList.length <= 0">
+      <h3>Không tìm được kết quả phù hợp</h3>
+    </div>
+
+    <mat-paginator
+      [pageSizeOptions]="pageSizeOpstion"
+      [length]="length"
+      (page)="handlePageEvent($event)"
+      showFirstLastButtons
+      aria-label="Select page of periodic elements"
+    >
+    </mat-paginator>
+  </div>
+</div>

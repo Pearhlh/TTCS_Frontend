@@ -1,0 +1,16 @@
+<div class="single-guest" [ngStyle]="isSelected ? {'background-color': '#EBF5FF'} : null">
+  <div class="image">
+    <img src="{{ avatarUrl }}" alt="Avatar" class="avatar" />
+  </div>
+
+  <div class="content">
+    <div class="content-description">
+      <span style="font-weight: bold">{{getUserName()}}</span>
+      <span>{{getLastContent()}}</span>
+    </div>
+
+    <div class="time">
+      <span>{{getLastTime()}}</span>
+    </div>
+  </div>
+</div>

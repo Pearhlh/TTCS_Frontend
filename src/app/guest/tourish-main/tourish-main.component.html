@@ -1,0 +1,157 @@
+<div class="search-container">
+  <div class="tour-search">
+    <div
+      class="row"
+      [formGroup]="setTourForm"
+      style="height: fit-content !important"
+    >
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form">
+        <h4 class="tour-name">Tìm kiếm ngay</h4>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form">
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Bạn muốn đi đâu</mat-label>
+          <input
+            matInput
+            fullwidth
+            placeholder="Vd: Đà Nẵng"
+            formControlName="endPoint"
+          />
+        </mat-form-field>
+        <div class="validation-container">
+          <app-validation
+            *ngIf="isSubmit"
+            [formGroup]="setTourForm"
+            [formGroupControlName]="'endPoint'"
+          ></app-validation>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-5 create-form">
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Nơi bắt đầu</mat-label>
+          <input
+            matInput
+            fullwidth
+            placeholder="Vd: Hà Nội"
+            formControlName="startingPoint"
+          />
+        </mat-form-field>
+        <div class="validation-container">
+          <app-validation
+            *ngIf="isSubmit"
+            [formGroup]="setTourForm"
+            [formGroupControlName]="'startingPoint'"
+          ></app-validation>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-5 create-form">
+        <mat-form-field appearance="outline" class="full-width-input">
+          <mat-label>Ngày bắt đầu</mat-label>
+          <input
+            matInput
+            [ngxMatDatetimePicker]="picker"
+            placeholder="Choose a date"
+            formControlName="startingDate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="$any(picker)"
+          ></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker
+            #picker
+            [showSpinners]="true"
+            [showSeconds]="true"
+            [touchUi]="touchUi"
+            [color]="color"
+            [enableMeridian]="enableMeridian"
+          >
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
+        <div class="validation-container">
+          <app-validation
+            *ngIf="isSubmit"
+            [formGroup]="setTourForm"
+            [formGroupControlName]="'startingDate'"
+          ></app-validation>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-2 create-form">
+        <button
+          (click)="navigateToSearch()"
+          (keyup.enter)="navigateToSearch()"
+          mat-raised-button
+          color="primary"
+          style="height: 56px; font-size: 14px; width: 100%"
+        >
+          Tìm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-info-container">
+  <div class="page-info">
+    <div class="page-info-image">
+      <img
+        src="https://tourishapiblobstorage.blob.core.windows.net/start-container/tour_guide.png"
+        alt=""
+      />
+    </div>
+    <div class="info-description">
+      <h3>Hệ thống tour đa dạng</h3>
+      <h4>Bao phủ các tour trong và ngoài nước</h4>
+    </div>
+  </div>
+
+  <div class="page-info">
+    <div class="page-info-image">
+      <img
+        src="https://tourishapiblobstorage.blob.core.windows.net/start-container/trust.jpg"
+        alt=""
+      />
+    </div>
+    <div class="info-description">
+      <h3>Độ tin cậy cao</h3>
+      <h4>Liên kết với các đơn vị tin cậy, trung thành</h4>
+    </div>
+  </div>
+
+  <div class="page-info">
+    <div class="page-info-image">
+      <img
+        src="https://tourishapiblobstorage.blob.core.windows.net/start-container/live_chat.jpg"
+        alt=""
+      />
+    </div>
+    <div class="info-description">
+      <h3>Tư Vấn Chuyên Nghiệp</h3>
+      <h4>Hỗ trợ nhiệt tình, chăm sóc chu đáo</h4>
+    </div>
+  </div>
+</div>
+
+<div>
+  <!-- <app-tourish-pack
+    [isTopSellingInMonth]="true"
+    [category]="'Tour hot nhất hiện nay'"
+    [description]="'Tour bán chạy trong tháng'"
+  ></app-tourish-pack> -->
+
+  <app-tourish-pack
+    *ngFor="let category of categoryList"
+    [category]="category.name"
+    [description]="category.description"
+  ></app-tourish-pack>
+
+  <app-schedule-pack [scheduleType]="1" [objectType]="0"></app-schedule-pack>
+
+  <app-schedule-pack [scheduleType]="1" [objectType]="1"></app-schedule-pack>
+
+  <app-schedule-pack [scheduleType]="2" [objectType]="0"></app-schedule-pack>
+
+  <app-schedule-pack [scheduleType]="2" [objectType]="1"></app-schedule-pack>
+</div>

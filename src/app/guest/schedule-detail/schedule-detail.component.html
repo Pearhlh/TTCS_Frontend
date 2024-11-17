@@ -1,0 +1,252 @@
+<div class="container">
+  <div class="below-title">
+    <div class="service-item" style="align-self: center; width: 170px"  id="detail-start">
+      <button
+        mat-flat-button
+        color="primary"
+        style="width: 100%; height: 56px; font-size: 16px; align-self: center"
+        (click)="scrollToElement('payment-form')"
+        [disabled]="!isScheduleAvailable()"
+      >
+        {{ isScheduleAvailable() ? "Đặt ngay" : "Chưa có lịch trình cụ thể" }}
+      </button>
+    </div>
+
+    <span *ngIf="this.schedule?.address !== undefined"
+      ><i class="fa fa-map-marker" aria-hidden="true"></i> Địa chỉ:
+      <span style="font-weight: lighter">{{
+        this.schedule?.address
+      }}</span></span
+    >
+    <span *ngIf="this.schedule?.startingPlace !== undefined"
+      ><i class="fa fa-map-marker" aria-hidden="true"></i> Điểm bắt đầu:
+      <span style="font-weight: lighter">{{
+        this.schedule?.startingPlace
+      }}</span></span
+    >
+    <span *ngIf="this.schedule?.headingPlace !== undefined"
+      ><i class="fa fa-location-arrow" aria-hidden="true"></i> Điểm đến:
+      <span style="font-weight: lighter">{{
+        this.schedule?.headingPlace
+      }}</span></span
+    >
+    <span *ngIf="this.schedule?.vehicleType !== undefined">
+      <i
+        class="fa fa-bus"
+        aria-hidden="true"
+        *ngIf="isMovingContactPresent"
+      ></i>
+      <i
+        class="fa fa-plane"
+        aria-hidden="true"
+        *ngIf="isPlanePresent"
+        style="margin-right: 10px"
+      ></i>
+      <i
+        class="fa fa-train"
+        aria-hidden="true"
+        *ngIf="isTrainPresent"
+        style="margin-right: 10px"
+      ></i>
+      <i
+        class="fa fa-ship"
+        aria-hidden="true"
+        *ngIf="isShipPresent"
+        style="margin-right: 10px"
+      ></i>
+      <i
+        class="fa fa-taxi"
+        aria-hidden="true"
+        *ngIf="isLocalTransportPresent"
+        style="margin-right: 10px"
+      ></i>
+    </span>
+  </div>
+
+  <div class="tour-description-content">
+    <h4 class="tour-name">{{this.schedule?.name ?? ""}}</h4>
+    <app-tiny-mce-editor
+      style="width: 90% !important"
+      [blobName]="this.scheduleId"
+      [containerName]="getContainerName()"
+      [editable]="false"
+    ></app-tiny-mce-editor>
+  </div>
+
+  <div class="tour-description">
+    <h4 class="tour-name">Hướng dẫn viên</h4>
+    Hướng Dẫn Viên (HDV) sẽ liên lạc với Quý Khách khoảng 1 ngày trước khi khởi
+    hành để sắp xếp giờ đón và cung cấp các thông tin cần thiết cho chuyển đi.
+  </div>
+
+  <div class="tour-description">
+    <div class="title">
+      <h4 class="tour-name">Chi tiết giá</h4>
+    </div>
+    <mat-tab-group>
+      <mat-tab label="Thông tin giá dịch vụ">
+        <div class="price-container">
+          <p>
+            <span style="font-weight: bold">Giá dịch vụ:</span>
+            {{ formatVNCurrency(getTotalPrice()) }}.
+          </p>
+        </div>
+
+        <div class="price-container" style="padding-top: 0 !important">
+          <p style="margin-bottom: 0">
+            <span style="font-weight: bold">Lưu ý về giá:</span>
+          </p>
+          <mat-list>
+            <mat-list-item
+              *ngFor="let instruction of getPriceInstruction(); index as i"
+            >
+              <span matListItemLine class="list-item">
+                {{ i + 1 + ". " + instruction.description }}</span
+              >
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Lưu ý">
+        <div class="price-container">
+          <mat-list>
+            <mat-list-item
+              *ngFor="let instruction of getCautionInstruction(); index as i"
+            >
+              <span matListItemLine class="list-item">
+                {{ i + 1 + ". " + instruction.description }}</span
+              >
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <div class="tour-description">
+    <div class="title">
+      <h4 class="tour-name">Danh sách lịch trình hiện có:</h4>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">STT</th>
+          <th scope="col">Ngày bắt đầu</th>
+          <th scope="col">Ngày kết thúc</th>
+          <th scope="col">Tình trạng</th>
+          <th scope="col">Số vé còn lại</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="
+            let timeLine of schedule?.serviceScheduleList ?? [];
+            index as i
+          "
+        >
+          <td scope="row">{{ i + 1 }}</td>
+          <td scope="row">{{ getDateFormat(timeLine.startDate) }}</td>
+          <td>
+            {{ getDateFormat(timeLine.endDate) }}
+          </td>
+          <td>{{ getStatusPhase((timeLine.status ?? "").toString()) + " " + (isTicketAvailable(timeLine) ? "(Còn vé)" : "(Hết vé)") }}</td>
+          <td>
+            {{ timeLine.remainTicket ?? 0 }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tour-description" id="payment-form">
+    <div class="register-container">
+      <div
+        class="row tour-register"
+        [formGroup]="setTourForm"
+        style="height: fit-content !important"
+      >
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form">
+          <h4 class="tour-name">Đặt vé ngay</h4>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Số vé</mat-label>
+            <input
+              matInput
+              fullwidth
+              type="number"
+              placeholder="Vd: 2"
+              formControlName="totalTicket"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="this.setTourForm.get('totalTicket')?.touched"
+              [formGroup]="setTourForm"
+              [formGroupControlName]="'totalTicket'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 create-form">
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Số vé (Trẻ em dưới 14 tuổi)</mat-label>
+            <input
+              matInput
+              fullwidth
+              type="number"
+              placeholder="Vd: 2"
+              formControlName="totalChildTicket"
+            />
+          </mat-form-field>
+          <div class="validation-container">
+            <app-validation
+              *ngIf="this.setTourForm.get('totalChildTicket')?.touched"
+              [formGroup]="setTourForm"
+              [formGroupControlName]="'totalChildTicket'"
+            ></app-validation>
+          </div>
+        </div>
+
+        <div
+          class="col-xs-12 col-sm-12 col-md-4 col-lg-4 create-form"
+          style="margin-bottom: 10px"
+        >
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Lịch trình</mat-label>
+            <mat-select required formControlName="serviceScheduleId">
+              <mat-option
+                *ngFor="let timeLine of schedule?.serviceScheduleList ?? []"
+                [value]="timeLine.id"
+                [disabled]="!isTicketAvailable(timeLine)"
+              >
+                {{
+                  getDateFormat(timeLine.startDate) +
+                    " - " +
+                    getDateFormat(timeLine.endDate)
+                }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 create-form">
+          <button
+            mat-flat-button
+            color="primary"
+            style="width: 100%; height: 56px; font-size: 16px"
+            (click)="register()"
+          >
+            Gửi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tour-description">
+    <app-service-comment-section [serviceId]="scheduleId" [serviceType]="getScheduleType()"></app-service-comment-section>
+  </div>
+</div>

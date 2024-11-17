@@ -1,0 +1,109 @@
+<div class="big-chat-container">
+  <div class="chat-container">
+    <div class="chat-content" #chatContent>
+      <h3
+        style="margin-left: 20px; font-weight: bold"
+        *ngIf="messageList.length <= 0 && this.connectionId == ''"
+      >
+        Chọn người dùng để xem lịch sử cuộc hội thoại
+      </h3>
+
+      <h3
+        style="margin-left: 20px; font-weight: bold"
+        *ngIf="messageList.length <= 0 && this.connectionId.length > 0"
+      >
+        Nhập nội dung cần gửi
+      </h3>
+
+      <ng-container *ngFor="let message of messageList">
+        <app-send-big-chat
+          *ngIf="message.side == 1"
+          [content]="message.content"
+          [sendTime]="message.createDate ?? ''"
+          [state]="message.state ?? 3"
+        ></app-send-big-chat>
+
+        <app-receive-big-chat
+          *ngIf="message.side == 2"
+          [content]="message.content"
+          [sendTime]="message.createDate ?? ''"
+          [state]="message.state ?? 3"
+        ></app-receive-big-chat>
+      </ng-container>
+    </div>
+
+    <div class="chat-input" [formGroup]="messFb">
+      <div class="emoji">
+        <ng-container>
+          <emoji-mart
+            class="emoji-mart"
+            set="google"
+            [isNative]="true"
+            *ngIf="showEmojiPicker"
+            (emojiSelect)="addEmoji($event)"
+            title="Pick your emoji…"
+          ></emoji-mart>
+        </ng-container>
+        <button mat-mini-fab (click)="toggleEmojiPicker()">😀</button>
+      </div>
+
+      <div style="margin-top: -20px; margin-bottom: 10px">
+        <app-validation
+          *ngIf="
+            this.messFb.get('messsage')?.errors &&
+            (messFb.get('messsage')?.touched || isSubmitted)
+          "
+          [formGroup]="messFb"
+          [formGroupControlName]="'messsage'"
+        ></app-validation>
+      </div>
+      <mat-form-field appearance="outline" class="chat-input-mat">
+        <input
+          matInput
+          fullwidth
+          placeholder="Vd: Bồ Công Anh"
+          formControlName="message"
+          (keyup.enter)="sendMessage()"
+        />
+      </mat-form-field>
+
+      <mat-spinner
+        [diameter]="40"
+        style="margin-left: 10px"
+        *ngIf="this.isSending"
+      ></mat-spinner>
+
+      <button
+        mat-raised-button
+        color="danger"
+        [disabled]="true"
+        *ngIf="!this.isOpen"
+        style="font-size: 12px"
+      >
+        Đã đóng
+      </button>
+
+      <button
+        mat-icon-button
+        color="primary"
+        aria-label="Example icon button with a home icon"
+        (click)="sendMessage()"
+        *ngIf="this.isOpen && !this.isSending"
+        (keyup.enter)="sendMessage()"
+      >
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="guest-container">
+    <app-chat-guest-selector
+      *ngFor="let conHis of guestConHistoryList ?? []"
+      [guestMessageConHistory]="conHis"
+      [isSelected]="conHis.guestMessageCon.connectionID === connectionId"
+      [lastChatInput]="
+        conHis.guestMessageCon.connectionID === connectionId ? newMessage : null
+      "
+      (click)="onClickHistory(conHis.guestMessageCon.connectionID)"
+    ></app-chat-guest-selector>
+  </div>
+</div>

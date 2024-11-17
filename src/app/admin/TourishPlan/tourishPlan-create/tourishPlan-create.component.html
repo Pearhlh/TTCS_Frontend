@@ -1,0 +1,191 @@
+<div class="container" style="padding: 20px 0 20px">
+  <div
+    class="outlet"
+    style="
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      flex-direction: column !important;
+      background-color: white;
+      padding-bottom: 40px;
+    "
+  >
+    <div
+      style="
+        display: flex;
+        flex-direction: column !important;
+        flex-wrap: 1;
+        width: 100%;
+      "
+    >
+      <div class="row">
+        <h2 mat-form-label style="font-weight: heavy">Thêm thông tin Tour</h2>
+      </div>
+
+      <div class="container-controller">
+        <div
+          class="row"
+          style="display: flex; flex-direction: row !important; flex-wrap: 1"
+        >
+          <div style="margin-right: 20px">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="formSubmit_create_info()"
+            >
+              Tạo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <mat-tab-group mat-stretch-tabs>
+        <mat-tab label="Thông tin tour">
+          <ng-template matTabContent>
+            <form [formGroup]="createformGroup">
+              <div class="row" style="margin-top: 20px; margin-left: 50px">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+                  <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Tên tour</mat-label>
+                    <input
+                      matInput
+                      fullwidth
+                      placeholder="Vd: Bồ Công Anh"
+                      formControlName="tourName"
+                    />
+                  </mat-form-field>
+
+                  <div class="validation-container">
+                    <app-validation
+                      *ngIf="
+                        this.createformGroup.get('tourName')?.errors &&
+                        (createformGroup.get('tourName')?.touched ||
+                          isSubmitted)
+                      "
+                      [formGroup]="createformGroup"
+                      [formGroupControlName]="'tourName'"
+                    ></app-validation>
+                  </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+                  <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Điểm xuất phát</mat-label>
+                    <input
+                      matInput
+                      placeholder="Vd: Hà Nội"
+                      formControlName="startingPoint"
+                    />
+                  </mat-form-field>
+                  <div class="validation-container">
+                    <app-validation
+                      *ngIf="
+                        this.createformGroup.get('startingPoint')?.errors &&
+                        (createformGroup.get('startingPoint')?.touched ||
+                          isSubmitted)
+                      "
+                      [formGroup]="createformGroup"
+                      [formGroupControlName]="'startingPoint'"
+                    ></app-validation>
+                  </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+                  <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Điểm đến</mat-label>
+                    <input
+                      matInput
+                      placeholder="Đà Nẵng"
+                      formControlName="endingPoint"
+                    />
+                  </mat-form-field>
+                  <div class="validation-container">
+                    <app-validation
+                      *ngIf="
+                        this.createformGroup.get('endingPoint')?.errors &&
+                        (createformGroup.get('endingPoint')?.touched ||
+                          isSubmitted)
+                      "
+                      [formGroup]="createformGroup"
+                      [formGroupControlName]="'endingPoint'"
+                    ></app-validation>
+                  </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+                  <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Số điện thoại hỗ trợ</mat-label>
+                    <input
+                      matInput
+                      placeholder="VD: 0354324599"
+                      formControlName="supportNumber"
+                    />
+                  </mat-form-field>
+                  <div class="validation-container">
+                    <app-validation
+                      *ngIf="
+                        this.createformGroup.get('supportNumber')?.errors &&
+                        (createformGroup.get('supportNumber')?.touched ||
+                          isSubmitted)
+                      "
+                      [formGroup]="createformGroup"
+                      [formGroupControlName]="'supportNumber'"
+                    ></app-validation>
+                  </div>
+                </div>
+
+                <!-- <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+                  <mat-google-maps-autocomplete
+                    country="vn"
+                    type="address"
+                    (onAutocompleteSelected)="onAutocompleteSelected($event)"
+                    (onLocationSelected)="onLocationSelected($event)"
+                  >
+                  </mat-google-maps-autocomplete>
+                </div> -->
+
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 create-form">
+                  <div
+                    class="row"
+                    style="
+                      margin-left: 0 !important;
+                      margin-bottom: 1rem;
+                      width: 100%;
+                    "
+                  >
+                    <tourishCategory-multiselect-autocomplete
+                      style="width: 100%"
+                      [data_selected]="[]"
+                      (result)="selectChangeCategory($event)"
+                    >
+                    </tourishCategory-multiselect-autocomplete>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <div class="row" style="margin-left: 50px !important">
+              <app-tiny-mce-editor
+                style="width: 92% !important"
+                [blobName]="''"
+                [containerName]="''"
+                (result)="getTinyMceResult($event)"
+              ></app-tiny-mce-editor>
+              <input type="file" style="visibility: hidden" />
+              <div style="margin-top: -20px; margin-bottom: 10px">
+                <app-validation
+                  *ngIf="
+                    this.createformGroup.get('description')?.errors &&
+                    (createformGroup.get('description')?.touched || isSubmitted)
+                  "
+                  [formGroup]="createformGroup"
+                  [formGroupControlName]="'description'"
+                ></app-validation>
+              </div>
+            </div>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>

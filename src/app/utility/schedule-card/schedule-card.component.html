@@ -1,0 +1,102 @@
+<mat-card class="example-card" (click)="navigateToDetail()">
+  <mat-card-content>
+    <div
+      style="
+        margin-left: 5px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        min-height: 252px;
+        width: 100%;
+      "
+    >
+      <div class="image-container">
+        <img
+          mat-card-image
+          src="{{ this.firstImageUrl }}"
+          alt="Ảnh miêu tả"
+        />
+      </div>
+
+      <div class="schedule-content">
+        <p class="tour-name">{{ getTourName(scheduleName) }}</p>
+
+        <div class="schedule-content-info" *ngIf="startingPlace.length > 0">
+          <div class="destination">
+            <p class="schedule-place">{{ startingPlace }}</p>
+          </div>
+
+          <i
+            class="fa fa-arrow-right"
+            aria-hidden="true"
+            style="font-size: 16px"
+          ></i>
+
+          <div class="destination">
+            <p class="schedule-place">{{ headingPlace }}</p>
+          </div>
+        </div>
+
+        <div class="schedule-content-info" *ngIf="startingPlace.length > 0">
+          <div class="destination">
+            <p class="schedule-title">Lịch trình gần nhất</p>
+          </div>
+
+          <div class="destination"></div>
+        </div>
+
+        <div class="schedule-content-info" *ngIf="startingPlace.length > 0">
+          <div class="destination">
+            <p>
+              {{ getDateFormat(serviceScheduleList[0].startDate.toString()) }}
+            </p>
+          </div>
+          <div class="destination">
+            <p style="text-align: end !important">
+              {{ getDateFormat(serviceScheduleList[0].endDate.toString()) }}
+            </p>
+          </div>
+        </div>
+
+        <div class="schedule-content-info" *ngIf="address.length > 0">
+          <div class="destination">
+            <p class="schedule-place">{{ address }}</p>
+          </div>
+        </div>
+
+        <div class="schedule-content-info" *ngIf="address.length > 0">
+          <div class="destination">
+            <p class="schedule-title">Lịch trình gần nhất</p>
+          </div>
+
+          <div class="destination"></div>
+        </div>
+
+        <div class="schedule-content-info" *ngIf="address.length > 0">
+          <div class="destination">
+            <p>
+              {{ getDateFormat(serviceScheduleList[0].startDate.toString()) }}
+            </p>
+          </div>
+          <div class="destination">
+            <p style="text-align: end !important">
+              {{ getDateFormat(serviceScheduleList[0].endDate.toString()) }}
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div
+            style="
+              display: flex;
+              flex-direction: row-reverse;
+              align-items: flex-end;
+            "
+          >
+            <p class="tour-price">{{ formatVNCurrency(schedulePrice) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

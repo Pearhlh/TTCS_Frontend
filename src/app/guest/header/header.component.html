@@ -1,0 +1,221 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+
+<div class="container-fluid" #header>
+  <!-- Nav tabs -->
+  <div class="page-title" (click)="navigateUrl('/main-page')">
+    <!-- <img
+      src="{{ getBlobUrl() + '/start-container/tour_logo.png' }}"
+      class="img-logo"
+      style="border: 2px solid black; border-radius: 10px; margin-right: 20px"
+    /> -->
+
+    <h3
+      style="
+        font-size: 35px !important;
+        font-family: Ubuntu sans-serif;
+        padding-top: 16px;
+      "
+    >
+    Vietnam Tourist
+    </h3>
+  </div>
+
+  <div class="searchInput">
+    <mat-form-field appearance="outline" class="full-width-input" style="margin-top: 20px;">
+      <input
+        #searchInput
+        matInput
+        [formControl]="searchControl"
+        type="text"
+        fullwidth
+        name="search"
+        id="search"
+        placeholder="Tìm kiếm sản phẩm"
+      />
+    </mat-form-field>
+
+    <button
+      mat-fab
+      color="primary"
+      style="margin-left: 10px"
+    >
+      <i class="fa fa-search" aria-hidden="true" style="color: white"></i>
+    </button>
+  </div>
+
+  <div style="display: flex; flex-direction: row">
+    <button mat-button ghost status="primary">
+      <i
+        class="fa fa-bell"
+        aria-hidden="true"
+        style="font-size: 22px; color: rgb(105, 104, 104)"
+      ></i>
+    </button>
+
+    <button mat-button [matMenuTriggerFor]="menu">
+      <i
+        class="fa fa-sign-in"
+        aria-hidden="true"
+        style="font-size: 30px; color: rgb(105, 104, 104)"
+      ></i>
+    </button>
+  </div>
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openLoginDialog()">Đăng nhập</button>
+    <button mat-menu-item (click)="navigateRegister()">Đăng kí</button>
+  </mat-menu>
+
+  <div
+    id="autocomplete-search"
+    #autocompleteSearch
+    class="autocomplete-search"
+    (appOutsideClick)="outsideAutoCompleteSearchClick($event)"
+  >
+    <h6 id="search-title">Kết quả tìm kiếm</h6>
+    <div class="searchContent">
+      <app-tourish-auto-search-card
+        *ngFor="let tour of tourList"
+        [id]="tour.id ?? ''"
+        [tourName]="tour.tourName"
+        [tourPrice]="getTotalPrice(tour)"
+        (closeSearch)="closeSearch($event)"
+        style="width: 100%"
+      ></app-tourish-auto-search-card>
+      <h6 *ngIf="this.tourLength <= 0 && !this.isSearchLoading">
+        Không có kết quả phù hợp
+      </h6>
+      <h6 *ngIf="this.isSearchLoading">Đang tìm kiếm</h6>
+    </div>
+  </div>
+
+  <div
+    id="mySidenav"
+    #mySidenav
+    class="sidenav"
+    (appOutsideClick)="outsideNavClick($event)"
+  >
+    <div class="title-nav">
+      <button
+      mat-stroked-button
+      (click)="navMenuClick()"
+      style="margin-right: 10px"
+    >
+      <i
+        class="fa fa-bars"
+        style="font-size: 22px; color: rgb(105, 104, 104)"
+        aria-hidden="true"
+      ></i>
+    </button>
+
+      <h6
+        *ngIf="isNavOpen"
+        style="
+          font-size: 24px;
+          font-weight: bolder;
+          color: white;
+          padding: 20px 0px 10px;
+          white-space: nowrap;
+        "
+      >
+        Menu
+      </h6>
+
+
+    </div>
+
+    <div class="sideNavContent" style="width: 100%" *ngIf="isNavOpen">
+      <div class="sidenavCategory">
+        <mat-expansion-panel expanded>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h6
+                style="
+                  font-size: 16px;
+                  padding-bottom: 0 !important;
+                  font-weight: bold;
+                  margin-bottom: 0 !important;
+                  color: whitesmoke;
+                  text-wrap: nowrap;
+                "
+              >
+                Thể loại tour
+              </h6>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div
+            ngbNav
+            #nav="ngbNav"
+            [(activeId)]="activeItem"
+            class="nav-pills flex-column"
+            orientation="vertical"
+          >
+            <ng-container
+              ngbNavItem="{{ category.id }}"
+              *ngFor="let category of categoryList"
+            >
+              <button
+                class="nav-button"
+                ngbNavLink
+                [matTooltip]="category.name"
+                (click)="navigateCategoryUrl('search-page', category.name)"
+              >
+                {{ category.name }}
+              </button>
+            </ng-container>
+          </div>
+        </mat-expansion-panel>
+      </div>
+    </div>
+
+    <div class="sidenavCategory" *ngIf="isNavOpen">
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h6
+              style="
+                font-size: 16px;
+                padding-bottom: 0 !important;
+                font-weight: bold;
+                margin-bottom: 0 !important;
+                color: whitesmoke;
+                text-wrap: nowrap;
+              "
+            >
+              Dịch vụ
+            </h6>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div
+          ngbNav
+          #nav="ngbNav"
+          [(activeId)]="activeItem"
+          class="nav-pills flex-column"
+          orientation="vertical"
+        >
+          <ng-container ngbNavItem="14th">
+            <button
+              class="nav-button"
+              ngbNavLink
+              (click)="navigateServiceUrl('service-search-page', 'moving')"
+            >
+              Vé di chuyển
+            </button>
+          </ng-container>
+          <ng-container ngbNavItem="15th">
+            <button
+              class="nav-button"
+              ngbNavLink
+              (click)="navigateServiceUrl('service-search-page', 'staying')"
+            >
+              Đặt trước khách sạn/Homestay
+            </button>
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+    </div>
+  </div>
+</div>
